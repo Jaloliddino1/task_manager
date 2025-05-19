@@ -1,9 +1,8 @@
-from django.core.serializers import serialize
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from task_manager.models import Project
-from task_manager.serializers import ProjectSerializer
+from task_manager.serializers import ProjectListSerializer, ProjectDetailSerializers, ProjectCreateAndUpdateSerializers
 
 
 class HelloAPIView(APIView):
@@ -16,31 +15,39 @@ class HelloAPIView(APIView):
 class ProjectAPIView(APIView):
     def get(self, request, pk=None):
         projects = Project.objects.all()
-        serializers = ProjectSerializer(projects, many=True)
+        serializers = ProjectListSerializer(projects, many=True)
         return Response(data=serializers.data)
 
     def post(self, request):
-        serializer = ProjectSerializer(data=request.data)
-        if serializer.is_valid():
-            data = serializer.validated_data
-            Project.objects.create(
-                name=data.get('name'),
-                description=data.get('description'),
-                owner=data.get('owner')
-            )
-            return Response({"message": "ok"}, status=201)
-        return Response(data=serializer.errors, status=400)
+        serializer = ProjectCreateAndUpdateSerializers(data=request.data, context={'request': request})
+        # if serializer.is_valid():
+        #     data = serializer.validated_data
+        #     Project.objects.create(
+        #         name=data.get('name'),
+        #         description=data.get('description'),
+        #         owner=data.get('owner')
+        #     )
+        #     return Response({"message": "ok"}, status=201)
+        # return Response(data=serializer.errors, status=400)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.validated_data
+        Project.objects.create(
+            name=data.get('name'),
+            description=data.get('description'),
+            owner=data.get('owner')
+        )
+        return Response({"message": "ok"}, status=201)
 
 
 class ProjectDetailAPIView(APIView):
     def get(self, request, pk):
         project = Project.objects.filter(id=pk).first()
-        serializer = ProjectSerializer(project)
+        serializer = ProjectDetailSerializers(project)
         return Response(serializer.data)
 
     def put(self, request, pk):
         project = Project.objects.filter(id=pk).first()
-        serializer = ProjectSerializer(data=request.data)
+        serializer = ProjectCreateAndUpdateSerializers(data=request.data)
         if serializer.is_valid():
             data = serializer.validated_data
             project.name = data.get('name')
