@@ -1,0 +1,37 @@
+from rest_framework import serializers
+
+from accounts.serializers import UserLightSerializer
+from task_manager.models import Task
+
+
+class TaskBaseSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = Task
+        fields = (
+            'id',
+            'title',
+            'project',
+            'user',
+            'status'
+        )
+
+
+class TaskListSerializers(TaskBaseSerializers):
+    user = UserLightSerializer()
+
+    class Meta(TaskBaseSerializers.Meta):
+        pass
+
+
+class TaskDetailSerializers(TaskBaseSerializers):
+    user = UserLightSerializer()
+
+    class Meta(TaskBaseSerializers.Meta):
+        pass
+
+
+class TaskCreateAndUpdateSerializers(TaskBaseSerializers):
+    class Meta(TaskBaseSerializers.Meta):
+        extra_kwargs = {
+            'id': {'read_only': True}
+        }

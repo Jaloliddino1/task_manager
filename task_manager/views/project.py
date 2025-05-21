@@ -1,8 +1,13 @@
+from django.db.models.functions import Trunc
+from rest_framework.decorators import action
+from rest_framework.mixins import ListModelMixin, RetrieveModelMixin
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.viewsets import GenericViewSet
 
 from task_manager.models import Project
-from task_manager.serializers import ProjectListSerializer, ProjectDetailSerializers, ProjectCreateAndUpdateSerializers
+from task_manager.serializers import ProjectListSerializer, ProjectDetailSerializers, ProjectCreateAndUpdateSerializers, \
+    AddMemberSerializers
 
 
 class HelloAPIView(APIView):
@@ -56,3 +61,16 @@ class ProjectDetailAPIView(APIView):
             project.save()
             return Response({"message": "ok"}, status=201)
         return Response(data=serializer.errors, status=400)
+
+
+class ProjectViewSet(GenericViewSet, ListModelMixin, RetrieveModelMixin):
+    queryset = Project.objects.all()
+    serializer_class = ProjectListSerializer
+
+    @action(methods=['post'], detail=True, serializer_class=AddMemberSerializers)
+    def add_member(self, request, *args, **kwargs):
+        project = self.get_object()
+        serializers = AddMemberSerializers(data=request.data)
+        serializers.is_valid(raise_exception=True)
+        project.members.add(serializers.validated_data.get('user'))
+        return Response({"message": "ok"})

@@ -3,6 +3,7 @@ from accounts.models import User
 
 
 class UserLightSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = User
         fields = (
