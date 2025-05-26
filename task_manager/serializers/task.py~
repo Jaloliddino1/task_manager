@@ -12,7 +12,7 @@ class TaskBaseSerializers(serializers.ModelSerializer):
             'title',
             'project',
             'user',
-            'status',
+            'status'
             'created_at'
         )
 
