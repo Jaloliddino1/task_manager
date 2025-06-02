@@ -9,6 +9,7 @@ from task_manager.models import Task
 from task_manager.serializers import TaskListSerializers, TaskCreateAndUpdateSerializers, TaskDetailSerializers
 from django.contrib.postgres.search import TrigramSimilarity
 from rest_framework import filters
+from rest_framework.permissions import IsAuthenticated
 
 
 # class TaskViewSet(ViewSet):
@@ -60,6 +61,7 @@ class TaskViewSet(ModelViewSet):
         DjangoFilterBackend,
         filters.OrderingFilter
     ]
+    permission_classes = [IsAuthenticated]
     search_fields = ['title']
     filterset_fields = ['status', 'project']
     ordering_fields = ['created_at']
