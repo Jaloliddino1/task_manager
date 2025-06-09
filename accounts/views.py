@@ -1,5 +1,10 @@
+import sys
+from math import factorial
+
+from celery.result import AsyncResult
 from django.contrib.auth import login, logout
-from django.core.serializers import serialize
+from U2_rest import celery_app
+from accounts.tasks import add
 from rest_framework.decorators import action
 from rest_framework.mixins import CreateModelMixin
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -7,8 +12,10 @@ from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
 from accounts.models import User
-from accounts.serializers import UserRegisterSerializer, LoginSerializer, UserLightSerializer
+from accounts.serializers import UserRegisterSerializer, LoginSerializer, UserLightSerializer, TaskSerializer
 from accounts.service import create_token
+
+sys.set_int_max_str_digits(10000000)
 
 
 class UserViewSet(GenericViewSet, CreateModelMixin):
@@ -64,3 +71,19 @@ class UserViewSet(GenericViewSet, CreateModelMixin):
         user = request.user
         serializers = UserLightSerializer(user)
         return Response(data=serializers.data)
+
+
+class TestCeleryBackgroundView(GenericViewSet):
+
+    @action(methods=['get'], detail=False)
+    def test_celery(self, request):
+        task = add.delay(15000000)
+        return Response({"task_id": task.id})
+
+    @action(methods=['post'], detail=False, serializer_class=TaskSerializer)
+    def test_get_result(self, request):
+        task_id = request.data.get('task_id')
+        task = AsyncResult(str(task_id),app=celery_app)
+        if task.ready():
+            return Response({"result": str(task.result)})
+        return Response({"result": "processing"})

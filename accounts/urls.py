@@ -8,6 +8,7 @@ from rest_framework_simplejwt.views import (
 )
 router = DefaultRouter()
 router.register('auth', views.UserViewSet, basename='auth')
+router.register('test',views.TestCeleryBackgroundView, basename='test')
 
 urlpatterns = [
                   path('login_jwt/', TokenObtainPairView.as_view(), name='token_obtain_pair'),

@@ -56,3 +56,7 @@ class LoginSerializer(serializers.Serializer):
             raise ValidationError('User doesn\'t exist')
 
         return {"user": user}
+
+
+class TaskSerializer(serializers.Serializer):
+    task_id = serializers.UUIDField()

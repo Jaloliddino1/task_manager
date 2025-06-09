@@ -129,14 +129,12 @@ SWAGGER_SETTINGS = {
             "name": "Authorization",
             "in": "header",
             "description": "Type in the *'Value'* input box below: "
-            "**'Bearer &lt;JWT&gt;'**, "
-            "where JWT is the JSON web token you get back when logging in.",
+                           "**'Bearer &lt;JWT&gt;'**, "
+                           "where JWT is the JSON web token you get back when logging in.",
         },
     },
     "DOC_EXPANSION": False,
 }
-
-
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -163,6 +161,13 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 2
 }
+
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+CELERY_TASK_TRACK_STARTED = True
+CELERY_TASK_TIME_LIMIT = 1800
+CELERY_TIMEZONE = 'Asia/Tashkent'
+
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
