@@ -2,6 +2,7 @@ import sys
 from math import factorial
 
 from celery import shared_task
+
 sys.set_int_max_str_digits(10000000)
 
 
@@ -10,3 +11,8 @@ def add(x):
     result = factorial(x)
     print(result)
     return result
+
+
+@shared_task
+def hi_task():
+    print('salom')
