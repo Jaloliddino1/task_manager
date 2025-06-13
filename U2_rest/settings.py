@@ -31,6 +31,8 @@ INSTALLED_APPS = [
     # local apps
     'accounts',
     'task_manager',
+    "notifications",
+    "common",
 
     # 3 rd
     'rest_framework',
@@ -175,6 +177,10 @@ USE_TZ = True
 
 AUTH_USER_MODEL = 'accounts.User'
 STATIC_URL = 'static/'
+
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
