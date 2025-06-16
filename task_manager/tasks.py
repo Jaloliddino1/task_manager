@@ -20,5 +20,4 @@ def export_model_to_exel():
             user=user
         )
 
-
     return file_path

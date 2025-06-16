@@ -21,6 +21,7 @@ ALLOWED_HOSTS = ["*"]
 # Application definition
 
 INSTALLED_APPS = [
+    "daphne",
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -33,6 +34,7 @@ INSTALLED_APPS = [
     'task_manager',
     "notifications",
     "common",
+    "chat",
 
     # 3 rd
     'rest_framework',
@@ -72,7 +74,8 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'U2_rest.wsgi.application'
+# WSGI_APPLICATION = 'U2_rest.wsgi.application'
+ASGI_APPLICATION = "U2_rest.asgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
@@ -163,6 +166,14 @@ CELERY_TIMEZONE = 'Asia/Tashkent'
 CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers.DatabaseScheduler'
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)],
+        },
+    },
+}
 
 LANGUAGE_CODE = 'en-us'
 
@@ -177,7 +188,6 @@ USE_TZ = True
 
 AUTH_USER_MODEL = 'accounts.User'
 STATIC_URL = 'static/'
-
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
