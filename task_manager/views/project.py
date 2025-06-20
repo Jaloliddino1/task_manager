@@ -1,5 +1,4 @@
 from django.db.models import Count
-from django.db.models.functions import Trunc
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.decorators import action
