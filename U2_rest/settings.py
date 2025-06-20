@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    "debug_toolbar",
 
     # local apps
     'accounts',
@@ -54,6 +55,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
 ROOT_URLCONF = 'U2_rest.urls'
@@ -77,6 +79,9 @@ TEMPLATES = [
 # WSGI_APPLICATION = 'U2_rest.wsgi.application'
 ASGI_APPLICATION = "U2_rest.asgi.application"
 
+INTERNAL_IPS = [
+    "127.0.0.1",
+]
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 

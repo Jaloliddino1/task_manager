@@ -1,3 +1,4 @@
+from django.db.models import Count
 from django.db.models.functions import Trunc
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
@@ -72,6 +73,12 @@ class ProjectDetailAPIView(APIView):
 class ProjectViewSet(GenericViewSet, ListModelMixin, RetrieveModelMixin):
     queryset = Project.objects.all()
     serializer_class = ProjectListSerializer
+    pagination_class = None
+
+    def get_queryset(self):
+        return self.queryset.select_related('owner').prefetch_related('members').annotate(
+            tasks_count=Count('task'),
+        )
 
     @action(methods=['post'], detail=True, serializer_class=AddMemberSerializers)
     def add_member(self, request, *args, **kwargs):

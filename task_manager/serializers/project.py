@@ -18,6 +18,7 @@ class ProjectListSerializer(serializers.Serializer):
     description = serializers.CharField()
     owner = UserLightSerializer()
     members = UserLightSerializer(many=True)
+    tasks_count = serializers.IntegerField(read_only=True)
 
 
 class ProjectCreateAndUpdateSerializers(serializers.ModelSerializer):

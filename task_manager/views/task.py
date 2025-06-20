@@ -5,6 +5,7 @@ from rest_framework.pagination import LimitOffsetPagination, PageNumberPaginatio
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, ViewSet, GenericViewSet
 
+from accounts.permissions import IsOwner, IsAdmin
 from task_manager.models import Task
 from task_manager.serializers import TaskListSerializers, TaskCreateAndUpdateSerializers, TaskDetailSerializers
 from django.contrib.postgres.search import TrigramSimilarity
@@ -61,7 +62,7 @@ class TaskViewSet(ModelViewSet):
         DjangoFilterBackend,
         filters.OrderingFilter
     ]
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated,IsAdmin]
     search_fields = ['title']
     filterset_fields = ['status', 'project']
     ordering_fields = ['created_at']
@@ -75,19 +76,24 @@ class TaskViewSet(ModelViewSet):
             return TaskDetailSerializers
         return self.serializer_class
 
-    # def get_queryset(self):
-    #     param = self.request.query_params.get('search')
-    #     status = self.request.query_params.get('status')
-    #     if param:
-    #         # icontains search
-    #         # return self.queryset.filter(title__icontains=param)
-    #         # fuzzy search
-    #         self.queryset = self.queryset.annotate(
-    #             similarty=TrigramSimilarity('title', param)
-    #         ).filter(similarty__gt=0.3).order_by('-similarty')
-    #     if status:
-    #         self.queryset = self.queryset.filter(status=status)
-    #     return self.queryset
+    def get_permissions(self):
+        if self.action in ['update', 'destroy', 'partial_update']:
+            return [IsOwner()]
+        return super(TaskViewSet, self).get_permissions()
+
+# def get_queryset(self):
+#     param = self.request.query_params.get('search')
+#     status = self.request.query_params.get('status')
+#     if param:
+#         # icontains search
+#         # return self.queryset.filter(title__icontains=param)
+#         # fuzzy search
+#         self.queryset = self.queryset.annotate(
+#             similarty=TrigramSimilarity('title', param)
+#         ).filter(similarty__gt=0.3).order_by('-similarty')
+#     if status:
+#         self.queryset = self.queryset.filter(status=status)
+#     return self.queryset
 
 # class TaskViewSet(GenericViewSet,
 #                   ListModelMixin,
