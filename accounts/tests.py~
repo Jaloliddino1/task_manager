@@ -60,6 +60,7 @@ class UserLoginAPITests(TestCase):
         }
 
     def test_login_jwt(self):
+        print(self.user)
         response = self.client.post(
             self.login_url, self.login_data
         )

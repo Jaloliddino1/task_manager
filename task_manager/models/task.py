@@ -1,5 +1,6 @@
 from django.db import models
 from accounts.models import User
+from common.models import BaseModel
 from task_manager.models.project import Project
 
 
@@ -10,12 +11,11 @@ class StatusChoice(models.TextChoices):
     DONE = 'done', 'Done'
 
 
-class Task(models.Model):
+class Task(BaseModel):
     title = models.CharField(max_length=255)
     project = models.ForeignKey(Project, on_delete=models.PROTECT, related_name='task')
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='task_accounts')
     status = models.CharField(max_length=255, choices=StatusChoice.choices, default=StatusChoice.TO_DO)
-    created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         db_table = 'tasks'

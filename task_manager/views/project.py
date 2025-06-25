@@ -1,4 +1,6 @@
-from django.db.models.functions import Trunc
+from django.db.models import Count
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework.decorators import action
 from rest_framework.mixins import ListModelMixin, RetrieveModelMixin
 from rest_framework.response import Response
@@ -23,6 +25,10 @@ class ProjectAPIView(APIView):
         serializers = ProjectListSerializer(projects, many=True)
         return Response(data=serializers.data)
 
+    @swagger_auto_schema(
+        request_body=ProjectCreateAndUpdateSerializers,
+        responses={201: openapi.Response('Success', ProjectCreateAndUpdateSerializers)},
+    )
     def post(self, request):
         serializer = ProjectCreateAndUpdateSerializers(data=request.data, context={'request': request})
         # if serializer.is_valid():
@@ -66,6 +72,12 @@ class ProjectDetailAPIView(APIView):
 class ProjectViewSet(GenericViewSet, ListModelMixin, RetrieveModelMixin):
     queryset = Project.objects.all()
     serializer_class = ProjectListSerializer
+    pagination_class = None
+
+    def get_queryset(self):
+        return self.queryset.select_related('owner').prefetch_related('members').annotate(
+            tasks_count=Count('task'),
+        )
 
     @action(methods=['post'], detail=True, serializer_class=AddMemberSerializers)
     def add_member(self, request, *args, **kwargs):
